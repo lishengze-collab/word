@@ -1863,3 +1863,4 @@
         {w:"zeal", i:"/ziːl/", m:"n. 热心；热情", g:"enthusiasm,passion"},
         {w:"zone", i:"/zəʊn/", m:"n. 地区", g:"area,region"}
     ];
+
