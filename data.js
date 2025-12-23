@@ -1,4 +1,4 @@
-﻿ const DATABASE = [
+﻿const DATABASE = [
         {w:"erupt", i:"/ɪˈrʌpt/", m:"vi. 爆发；喷出", g:"outburst,explode"},
         {w:"abrupt", i:"/əˈrʌpt/", m:"adj. 突然的；唐突的", g:"sudden"},
         {w:"bipartisan", i:"/ˌbaɪˈpɑːrtɪzn/", m:"adj. 两党的", g:"politics"},
@@ -1863,4 +1863,5 @@
         {w:"zeal", i:"/ziːl/", m:"n. 热心；热情", g:"enthusiasm,passion"},
         {w:"zone", i:"/zəʊn/", m:"n. 地区", g:"area,region"}
     ];
+
 
