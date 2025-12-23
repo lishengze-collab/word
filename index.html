@@ -4,336 +4,564 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pro Vocab Dictionary</title>
+    <title>VV-1 Vocab</title>
     <style>
-        /* --- iOS Pro Design System (PN-5 UI Baseline) --- */
         :root {
-            --bg-color: #F2F2F7;
-            --card-bg: #FFFFFF;
-            --text-primary: #000000;
-            --text-secondary: #8E8E93;
-            --accent-color: #007AFF;
-            --separator: #C6C6C8;
-            --glass-bg: rgba(242, 242, 247, 0.85);
-            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            /* iOS Fresh Green Theme */
+            --primary: #34C759;
+            --primary-bg: #E8F8ED;
+            --bg-body: #F2F2F7;
+            --bg-card: #FFFFFF;
+            --text-main: #000000;
+            --text-sub: #8E8E93;
+            --border: #E5E5EA;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-color: #000000;
-                --card-bg: #1C1C1E;
-                --text-primary: #FFFFFF;
-                --text-secondary: #98989D;
-                --accent-color: #0A84FF;
-                --separator: #38383A;
-                --glass-bg: rgba(28, 28, 30, 0.85);
-                --shadow: 0 4px 12px rgba(0,0,0,0.2);
+                --bg-body: #000000;
+                --bg-card: #1C1C1E;
+                --text-main: #FFFFFF;
+                --text-sub: #98989D;
+                --border: #38383A;
             }
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-primary);
+            font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
             margin: 0;
-            padding: 0;
-            padding-bottom: calc(20px + var(--safe-bottom));
-            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- Sticky Glass Header --- */
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: var(--glass-bg);
+        /* --- 顶部导航 --- */
+        .nav-bar {
+            padding: calc(10px + var(--safe-top)) 20px 10px;
+            background: rgba(255,255,255,0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            padding: calc(10px + var(--safe-top)) 16px 10px 16px;
-            border-bottom: 0.5px solid var(--separator);
-            transition: all 0.3s ease;
-        }
-
-        .title-area {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            font-weight: 600;
+            font-size: 17px;
+            z-index: 10;
         }
-
-        .app-title {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .word-count {
-            font-size: 13px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            background: var(--card-bg);
-            padding: 4px 10px;
+        .nav-title { color: var(--primary); }
+        .progress-pill {
+            font-size: 12px;
+            background: var(--primary-bg);
+            color: var(--primary);
+            padding: 4px 12px;
             border-radius: 20px;
         }
 
-        /* --- iOS Search Bar --- */
-        .search-container {
+        /* --- 主视图容器 --- */
+        .view-container {
+            flex: 1;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .view {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto;
+            padding: 20px;
+            display: none; /* 默认隐藏 */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .view.active { display: block; opacity: 1; }
+
+        /* --- 卡片视图 (Card Mode) --- */
+        #card-view {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-bottom: 80px; /* 留出底部按钮空间 */
         }
 
+        .flash-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 40px 24px;
+            text-align: center;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .count-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: var(--text-sub);
+            background: var(--bg-body);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .word-main { font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+        .word-ipa { font-family: "Menlo", monospace; color: var(--text-sub); font-size: 15px; margin-bottom: 24px; }
+        .word-meaning { font-size: 18px; line-height: 1.6; margin-bottom: 24px; color: var(--text-main); }
+        
+        .related-area {
+            font-size: 14px;
+            color: var(--text-sub);
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        .link-word {
+            color: var(--primary);
+            text-decoration: none;
+            margin: 0 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .audio-btn-large {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-bg);
+            color: var(--primary);
+            border: none;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: transform 0.1s;
+        }
+        .audio-btn-large:active { transform: scale(0.9); }
+
+        .action-bar {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .next-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
+        }
+
+        /* --- 列表视图 (List Mode) --- */
+        .search-bar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-body);
+            padding-bottom: 10px;
+            z-index: 5;
+        }
         .search-input {
             width: 100%;
-            background-color: rgba(118, 118, 128, 0.12);
-            border: none;
-            border-radius: 10px;
-            padding: 10px 12px 10px 36px;
-            font-size: 17px;
-            color: var(--text-primary);
-            outline: none;
-            transition: background 0.2s;
-        }
-
-        .search-input:focus {
-            background-color: rgba(118, 118, 128, 0.2);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            font-size: 16px;
-        }
-
-        /* --- Content Area --- */
-        #word-list {
-            padding: 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* --- Word Card --- */
-        .card {
-            background: var(--card-bg);
+            padding: 12px;
             border-radius: 12px;
+            border: none;
+            background: #E3E3E8;
+            font-size: 16px;
+            color: var(--text-main);
+        }
+        .list-item {
+            background: var(--bg-card);
             padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: var(--shadow);
-            position: relative;
-            animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card-header {
+            border-radius: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 4px;
+            align-items: center;
         }
+        .list-word { font-weight: 600; font-size: 17px; }
+        .list-mean { color: var(--text-sub); font-size: 14px; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .word {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .phonetic {
-            font-family: "Menlo", monospace;
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .meaning {
-            font-size: 16px;
-            color: var(--text-primary);
-            line-height: 1.4;
-            margin-top: 4px;
-        }
-
-        .tags {
-            margin-top: 10px;
+        /* --- 底部 Tab --- */
+        .tab-bar {
+            padding-bottom: var(--safe-bottom);
+            background: var(--bg-card);
+            border-top: 0.5px solid var(--border);
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            justify-content: space-around;
         }
-
-        .tag {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background-color: rgba(0, 122, 255, 0.1);
-            color: var(--accent-color);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* --- Audio Button --- */
-        .audio-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-        }
-        .audio-icon {
-            width: 20px;
-            height: 20px;
-            fill: var(--accent-color);
-            opacity: 0.7;
-        }
-
-        /* --- Error State --- */
-        .error-state {
+        .tab-item {
+            padding: 12px;
+            flex: 1;
             text-align: center;
-            padding: 40px 20px;
-            color: #FF3B30;
-            background: rgba(255, 59, 48, 0.1);
-            border-radius: 12px;
-            margin: 20px;
+            color: var(--text-sub);
+            font-size: 12px;
+            cursor: pointer;
         }
-        .error-title { font-weight: bold; margin-bottom: 8px; }
-        .error-desc { font-size: 14px; color: var(--text-secondary); }
+        .tab-item.active { color: var(--primary); }
+        .tab-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        /* --- iOS 风格弹窗 (Modal) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        
+        .ios-modal {
+            background: var(--bg-card);
+            width: 80%;
+            max-width: 320px;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .modal-overlay.show .ios-modal { transform: scale(1); }
+        .modal-word { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .modal-close {
+            margin-top: 20px;
+            background: #E3E3E8;
+            color: var(--text-main);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div class="title-area">
-            <div class="app-title">Dictionary</div>
-            <div id="status-bar" class="word-count">加载中...</div>
-        </div>
-        <div class="search-container">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="search-input" class="search-input" placeholder="Search (English / 中文)..." autocomplete="off">
+    <div class="nav-bar">
+        <div class="nav-title">VV-1 Vocab</div>
+        <div class="progress-pill" id="daily-progress">0 / 200</div>
+    </div>
+
+    <div class="view-container">
+        <div id="card-view" class="view active">
+            </div>
+
+        <div id="list-view" class="view">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索单词..." oninput="filterList(this.value)">
+            </div>
+            <div id="list-content">
+                </div>
         </div>
     </div>
 
-    <div id="word-list"></div>
+    <div class="action-bar" id="card-actions">
+        <button class="next-btn" onclick="nextCard()">Next / 记住了</button>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchTab('card')">
+            <span class="tab-icon">📇</span>
+            背诵
+        </div>
+        <div class="tab-item" onclick="switchTab('list')">
+            <span class="tab-icon">📑</span>
+            列表
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal" onclick="closeModal()">
+        <div class="ios-modal" onclick="event.stopPropagation()">
+            <div class="modal-word" id="modal-word">Word</div>
+            <div class="word-ipa" id="modal-ipa">/ipa/</div>
+            <div class="word-meaning" id="modal-mean">Meaning</div>
+            <button class="modal-close" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
 
     <script src="data.js"></script>
 
     <script>
-        // PN-5 Logic Implementation
-        const listContainer = document.getElementById('word-list');
-        const searchInput = document.getElementById('search-input');
-        const statusBar = document.getElementById('status-bar');
+        // --- VV-1 核心逻辑 ---
 
-        // 1. 初始化检查
-        window.onload = function() {
-            if (typeof DATABASE === 'undefined') {
-                showError("未检测到数据 (Data Missing)", "请检查 data.js 是否上传，或是否存在语法错误（如缺少逗号）。<br>请按 F12 查看控制台报错。");
-            } else {
-                initApp();
-            }
+        // 状态管理
+        const STATE = {
+            todayBatch: [],      // 今日需背单词索引列表
+            currentIndex: 0,     // 当前在 Batch 中的位置
+            progress: {},        // 记忆库: { "word": count }
+            lastDate: null       // 上次打开日期
         };
 
-        function initApp() {
-            // 更新计数
-            statusBar.innerText = `${DATABASE.length} Words`;
-            
-            // 初始渲染前 50 个单词（避免卡顿）
-            renderList(DATABASE.slice(0, 50));
+        // DOM 元素
+        const cardView = document.getElementById('card-view');
+        const listView = document.getElementById('list-view');
+        const listContent = document.getElementById('list-content');
+        const dailyProgress = document.getElementById('daily-progress');
+        const cardActions = document.getElementById('card-actions');
 
-            // 绑定搜索事件
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                handleSearch(query);
-            });
-        }
-
-        // 2. 渲染逻辑 (Card UI)
-        function renderList(items) {
-            if (items.length === 0) {
-                listContainer.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:40px;">No results found</div>`;
+        // 初始化
+        window.onload = function() {
+            if (typeof DATABASE === 'undefined' || DATABASE.length === 0) {
+                alert("未检测到 data.js 或数据为空！");
                 return;
             }
+            loadState();
+            generateDailyBatch();
+            renderCard();
+            renderListLazy(); // 初始渲染列表
+        };
 
-            let html = '';
-            items.forEach(item => {
-                // 安全处理，防止字段缺失导致报错
-                const word = item.w || "Unknown";
-                const phonetic = item.i || "";
-                const meaning = item.m || "No definition";
-                const group = item.g || "";
+        // 读取本地存储
+        function loadState() {
+            const saved = localStorage.getItem('vv1_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                STATE.progress = data.progress || {};
+                STATE.lastDate = data.lastDate;
+                STATE.todayBatch = data.todayBatch || [];
+                STATE.currentIndex = data.currentIndex || 0;
+            }
+        }
 
-                // 生成 Tag HTML
-                let tagsHtml = '';
-                if(group) {
-                    const tags = group.split(',').map(t => t.trim());
-                    tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
+        // 保存本地存储
+        function saveState() {
+            localStorage.setItem('vv1_state', JSON.stringify(STATE));
+        }
+
+        // 生成今日任务 (200词: 60%新 + 40%旧)
+        function generateDailyBatch() {
+            const today = new Date().toDateString();
+            
+            // 如果今天是新的一天，或者没有任务，则生成新任务
+            if (STATE.lastDate !== today || STATE.todayBatch.length === 0) {
+                const newWordsNeeded = 120; // 60%
+                const oldWordsNeeded = 80;  // 40%
+                
+                let newBatch = [];
+                let oldBatch = [];
+
+                // 遍历数据库分类
+                for (let i = 0; i < DATABASE.length; i++) {
+                    const word = DATABASE[i].w;
+                    if (STATE.progress[word]) {
+                        oldBatch.push(i);
+                    } else {
+                        newBatch.push(i);
+                    }
                 }
 
-                html += `
-                    <div class="card" onclick="speak('${word}')">
-                        <div class="card-header">
-                            <span class="word">${word}</span>
-                            <span class="phonetic">${phonetic}</span>
-                        </div>
-                        <div class="meaning">${meaning}</div>
-                        <div class="tags">${tagsHtml}</div>
-                        <button class="audio-btn" onclick="event.stopPropagation(); speak('${word}')">
-                            <svg class="audio-icon" viewBox="0 0 24 24">
-                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
+                // 随机打乱辅助函数
+                const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
+
+                // 选取单词
+                let selectedNew = shuffle(newBatch).slice(0, newWordsNeeded);
+                let selectedOld = shuffle(oldBatch).slice(0, oldWordsNeeded);
+
+                // 补齐逻辑 (如果旧词不够，用新词补，反之亦然)
+                if (selectedOld.length < oldWordsNeeded) {
+                    const moreNew = shuffle(newBatch).slice(newWordsNeeded, newWordsNeeded + (oldWordsNeeded - selectedOld.length));
+                    selectedNew = selectedNew.concat(moreNew);
+                }
+
+                STATE.todayBatch = selectedNew.concat(selectedOld);
+                STATE.lastDate = today;
+                STATE.currentIndex = 0; // 重置进度
+                saveState();
+            }
+            updateProgressUI();
         }
 
-        // 3. 搜索算法 (Smart Search)
-        function handleSearch(query) {
-            if (!query) {
-                renderList(DATABASE.slice(0, 50)); // 空搜索重置
+        // 渲染当前卡片
+        function renderCard() {
+            if (STATE.todayBatch.length === 0) {
+                cardView.innerHTML = `<div class="flash-card" style="justify-content:center;"><h3>今日任务生成失败</h3></div>`;
                 return;
             }
 
-            const results = DATABASE.filter(item => {
-                // 同时搜索单词、含义、分组
-                return (item.w && item.w.toLowerCase().includes(query)) ||
-                       (item.m && item.m.toLowerCase().includes(query)) ||
-                       (item.g && item.g.toLowerCase().includes(query));
-            });
+            if (STATE.currentIndex >= STATE.todayBatch.length) {
+                cardView.innerHTML = `
+                    <div class="flash-card" style="justify-content:center;">
+                        <div style="font-size:50px;">🎉</div>
+                        <h2>今日打卡完成!</h2>
+                        <p style="color:var(--text-sub)">已完成 200 个单词的记忆与复习</p>
+                    </div>`;
+                cardActions.style.display = 'none';
+                return;
+            }
 
-            // 限制显示数量，防止渲染太多卡死
-            renderList(results.slice(0, 50));
+            const dbIndex = STATE.todayBatch[STATE.currentIndex];
+            const item = DATABASE[dbIndex];
+            const count = STATE.progress[item.w] || 0;
+
+            // 处理关联词链接
+            let relatedHtml = '无关联词';
+            if (item.g) {
+                relatedHtml = item.g.split(',').map(w => {
+                    const cleanW = w.trim();
+                    return `<span class="link-word" onclick="showPopup('${cleanW}')">${cleanW}</span>`;
+                }).join(', ');
+            }
+
+            cardView.innerHTML = `
+                <div class="flash-card">
+                    <div class="count-badge">已背 ${count} 次</div>
+                    
+                    <div style="margin-top: 40px;">
+                        <div class="word-main">${item.w}</div>
+                        <div class="word-ipa">${item.i || ''}</div>
+                        <div class="word-meaning">${item.m}</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <button class="audio-btn-large" onclick="playAudio('${item.w}')">
+                            🔊
+                        </button>
+                        <div class="related-area">
+                            关联词: ${relatedHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 自动播放发音 (可选)
+            // playAudio(item.w); 
         }
 
-        // 4. 发音功能
-        function speak(text) {
+        // 下一张卡片逻辑
+        window.nextCard = function() {
+            if (STATE.currentIndex >= STATE.todayBatch.length) return;
+
+            const dbIndex = STATE.todayBatch[STATE.currentIndex];
+            const item = DATABASE[dbIndex];
+
+            // 更新记忆次数
+            if (!STATE.progress[item.w]) STATE.progress[item.w] = 0;
+            STATE.progress[item.w]++;
+
+            // 移动指针
+            STATE.currentIndex++;
+            
+            saveState();
+            updateProgressUI();
+            renderCard();
+        };
+
+        // UI 更新: 进度条
+        function updateProgressUI() {
+            dailyProgress.innerText = `${STATE.currentIndex} / ${STATE.todayBatch.length}`;
+        }
+
+        // 功能: 播放发音
+        window.playAudio = function(text) {
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
-            utterance.rate = 1;
             window.speechSynthesis.speak(utterance);
+        };
+
+        // --- 列表视图逻辑 ---
+        
+        // 懒渲染列表 (为了性能，只渲染前 100 个，或者搜索结果)
+        function renderListLazy(items = DATABASE) {
+            const limit = 100;
+            const displayItems = items.slice(0, limit);
+            
+            let html = '';
+            displayItems.forEach(item => {
+                html += `
+                    <div class="list-item" onclick="showPopup('${item.w}')">
+                        <div class="list-word">${item.w}</div>
+                        <div class="list-mean">${item.m}</div>
+                    </div>
+                `;
+            });
+            
+            if (items.length > limit) {
+                html += `<div style="text-align:center; padding:10px; color:var(--text-sub);">仅显示前 ${limit} 条，请搜索查看更多</div>`;
+            }
+            
+            listContent.innerHTML = html;
         }
 
-        // 5. 错误处理显示
-        function showError(title, msg) {
-            listContainer.innerHTML = `
-                <div class="error-state">
-                    <div class="error-title">⚠️ ${title}</div>
-                    <div class="error-desc">${msg}</div>
-                </div>
-            `;
-            statusBar.innerText = "Error";
-            statusBar.style.background = "#FF3B30";
-            statusBar.style.color = "white";
-        }
+        window.filterList = function(query) {
+            query = query.toLowerCase().trim();
+            if (!query) {
+                renderListLazy(DATABASE);
+                return;
+            }
+            const filtered = DATABASE.filter(item => item.w.toLowerCase().includes(query));
+            renderListLazy(filtered);
+        };
+
+        // --- 弹窗逻辑 ---
+        window.showPopup = function(wordText) {
+            const overlay = document.getElementById('modal');
+            const wEl = document.getElementById('modal-word');
+            const iEl = document.getElementById('modal-ipa');
+            const mEl = document.getElementById('modal-mean');
+
+            // 在库中查找单词
+            const target = DATABASE.find(i => i.w.toLowerCase() === wordText.toLowerCase());
+
+            if (target) {
+                wEl.innerText = target.w;
+                iEl.innerText = target.i || '';
+                mEl.innerText = target.m;
+                playAudio(target.w);
+            } else {
+                wEl.innerText = wordText;
+                iEl.innerText = "";
+                mEl.innerText = "词库中未找到此单词释义";
+            }
+
+            overlay.classList.add('show');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('modal').classList.remove('show');
+        };
+
+        // --- Tab 切换 ---
+        window.switchTab = function(tab) {
+            const tabs = document.querySelectorAll('.tab-item');
+            const views = document.querySelectorAll('.view');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            views.forEach(v => v.classList.remove('active'));
+
+            if (tab === 'card') {
+                tabs[0].classList.add('active');
+                cardView.classList.add('active');
+                cardActions.style.display = 'block';
+            } else {
+                tabs[1].classList.add('active');
+                listView.classList.add('active');
+                cardActions.style.display = 'none'; // 列表模式隐藏底部大按钮
+            }
+        };
+
     </script>
 </body>
 </html>
