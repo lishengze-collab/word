@@ -864,7 +864,7 @@
         {w:"lumber", i:"/ˈlʌmbə/", m:"n. 木材 v. 笨拙地移动", g:"timber,trudge"},
         {w:"luminous", i:"/ˈluːmɪnəs/", m:"adj. 发光的", g:"bright,shining"},
         {w:"lure", i:"/lʊə/", m:"v/n. 诱惑", g:"attract,tempt"},
-        {w:"luxury", i:"/ˈlʌkʃəri/", m:"n. 奢侈", g:"extravagance"}
+        {w:"luxury", i:"/ˈlʌkʃəri/", m:"n. 奢侈", g:"extravagance"},
         {w:"magnificent", i:"/mæɡˈnɪfɪsnt/", m:"adj. 壮丽的；华丽的", g:"splendid,grand"},
         {w:"magnify", i:"/ˈmæɡnɪfaɪ/", m:"vt. 放大；夸大", g:"enlarge,exaggerate"},
         {w:"magnitude", i:"/ˈmæɡnɪtjuːd/", m:"n. 巨大；震级", g:"scale,size"},
@@ -1863,6 +1863,7 @@
         {w:"zeal", i:"/ziːl/", m:"n. 热心；热情", g:"enthusiasm,passion"},
         {w:"zone", i:"/zəʊn/", m:"n. 地区", g:"area,region"}
     ];
+
 
 
 
