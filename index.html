@@ -1,94 +1,339 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocab V-1 词库系统</title>
-    <script src="data.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Pro Vocab Dictionary</title>
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; }
-        body { font-family: system-ui; background: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; }
-        
-        /* 搜索框样式 */
-        .search-box {
-            width: 100%; padding: 12px; border: 2px solid #ddd;
-            border-radius: 8px; font-size: 16px; box-sizing: border-box;
+        /* --- iOS Pro Design System (PN-5 UI Baseline) --- */
+        :root {
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-primary: #000000;
+            --text-secondary: #8E8E93;
+            --accent-color: #007AFF;
+            --separator: #C6C6C8;
+            --glass-bg: rgba(242, 242, 247, 0.85);
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        /* 状态提示 */
-        #status { font-size: 12px; color: #64748b; margin-top: 5px; text-align: right; }
-
-        /* 单词卡片样式 */
-        .word-card {
-            background: white; padding: 15px; border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px;
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --card-bg: #1C1C1E;
+                --text-primary: #FFFFFF;
+                --text-secondary: #98989D;
+                --accent-color: #0A84FF;
+                --separator: #38383A;
+                --glass-bg: rgba(28, 28, 30, 0.85);
+                --shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
         }
-        .word-header { display: flex; justify-content: space-between; align-items: center; }
-        .word-text { font-size: 24px; font-weight: bold; color: var(--primary); }
-        .phonetic { color: #64748b; font-family: "Lucida Sans Unicode"; }
-        .meaning { margin: 10px 0; color: #1e293b; line-height: 1.5; }
-        .synonyms { font-size: 13px; color: #059669; background: #ecfdf5; padding: 5px 10px; border-radius: 4px; }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        .no-result { text-align: center; color: #94a3b8; margin-top: 40px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            padding-bottom: calc(20px + var(--safe-bottom));
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Sticky Glass Header --- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: calc(10px + var(--safe-top)) 16px 10px 16px;
+            border-bottom: 0.5px solid var(--separator);
+            transition: all 0.3s ease;
+        }
+
+        .title-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .word-count {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--card-bg);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* --- iOS Search Bar --- */
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: rgba(118, 118, 128, 0.12);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px 10px 36px;
+            font-size: 17px;
+            color: var(--text-primary);
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        .search-input:focus {
+            background-color: rgba(118, 118, 128, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* --- Content Area --- */
+        #word-list {
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* --- Word Card --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .word {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .phonetic {
+            font-family: "Menlo", monospace;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .meaning {
+            font-size: 16px;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        .tags {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background-color: rgba(0, 122, 255, 0.1);
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* --- Audio Button --- */
+        .audio-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .audio-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-color);
+            opacity: 0.7;
+        }
+
+        /* --- Error State --- */
+        .error-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #FF3B30;
+            background: rgba(255, 59, 48, 0.1);
+            border-radius: 12px;
+            margin: 20px;
+        }
+        .error-title { font-weight: bold; margin-bottom: 8px; }
+        .error-desc { font-size: 14px; color: var(--text-secondary); }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <input type="text" id="searchInput" class="search-box" placeholder="输入单词搜索 (A-Z)..." oninput="handleSearch()">
-    <div id="status">正在初始化...</div>
-    <div id="resultArea"></div>
-</div>
+    <div class="header">
+        <div class="title-area">
+            <div class="app-title">Dictionary</div>
+            <div id="status-bar" class="word-count">加载中...</div>
+        </div>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" class="search-input" placeholder="Search (English / 中文)..." autocomplete="off">
+        </div>
+    </div>
 
-<script>
-    // 2. 核心逻辑
-    const resultArea = document.getElementById('resultArea');
-    const statusText = document.getElementById('status');
+    <div id="word-list"></div>
 
-    // 页面加载后立即检查数据
-    window.onload = () => {
-        if (typeof DATABASE !== 'undefined') {
-            statusText.innerText = `已加载词库: ${DATABASE.length} 个单词`;
-        } else {
-            statusText.innerHTML = `<span style="color:red">错误：未发现 data.js 或文件格式错误</span>`;
+    <script src="data.js"></script>
+
+    <script>
+        // PN-5 Logic Implementation
+        const listContainer = document.getElementById('word-list');
+        const searchInput = document.getElementById('search-input');
+        const statusBar = document.getElementById('status-bar');
+
+        // 1. 初始化检查
+        window.onload = function() {
+            if (typeof DATABASE === 'undefined') {
+                showError("未检测到数据 (Data Missing)", "请检查 data.js 是否上传，或是否存在语法错误（如缺少逗号）。<br>请按 F12 查看控制台报错。");
+            } else {
+                initApp();
+            }
+        };
+
+        function initApp() {
+            // 更新计数
+            statusBar.innerText = `${DATABASE.length} Words`;
+            
+            // 初始渲染前 50 个单词（避免卡顿）
+            renderList(DATABASE.slice(0, 50));
+
+            // 绑定搜索事件
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                handleSearch(query);
+            });
         }
-    };
 
-    function handleSearch() {
-        const query = document.getElementById('searchInput').value.toLowerCase().trim();
-        
-        if (!query) {
-            resultArea.innerHTML = '';
-            return;
+        // 2. 渲染逻辑 (Card UI)
+        function renderList(items) {
+            if (items.length === 0) {
+                listContainer.innerHTML = `<div style="text-align:center; color:var(--text-secondary); padding:40px;">No results found</div>`;
+                return;
+            }
+
+            let html = '';
+            items.forEach(item => {
+                // 安全处理，防止字段缺失导致报错
+                const word = item.w || "Unknown";
+                const phonetic = item.i || "";
+                const meaning = item.m || "No definition";
+                const group = item.g || "";
+
+                // 生成 Tag HTML
+                let tagsHtml = '';
+                if(group) {
+                    const tags = group.split(',').map(t => t.trim());
+                    tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
+                }
+
+                html += `
+                    <div class="card" onclick="speak('${word}')">
+                        <div class="card-header">
+                            <span class="word">${word}</span>
+                            <span class="phonetic">${phonetic}</span>
+                        </div>
+                        <div class="meaning">${meaning}</div>
+                        <div class="tags">${tagsHtml}</div>
+                        <button class="audio-btn" onclick="event.stopPropagation(); speak('${word}')">
+                            <svg class="audio-icon" viewBox="0 0 24 24">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
         }
 
-        // 基于之前的高效搜索逻辑
-        const results = DATABASE.filter(item => 
-            item.w.toLowerCase().includes(query)
-        ).slice(0, 50); // 仅展示前50个防止卡顿
+        // 3. 搜索算法 (Smart Search)
+        function handleSearch(query) {
+            if (!query) {
+                renderList(DATABASE.slice(0, 50)); // 空搜索重置
+                return;
+            }
 
-        render(results);
-    }
+            const results = DATABASE.filter(item => {
+                // 同时搜索单词、含义、分组
+                return (item.w && item.w.toLowerCase().includes(query)) ||
+                       (item.m && item.m.toLowerCase().includes(query)) ||
+                       (item.g && item.g.toLowerCase().includes(query));
+            });
 
-    function render(data) {
-        if (data.length === 0) {
-            resultArea.innerHTML = `<div class="no-result">未找到相关单词</div>`;
-            return;
+            // 限制显示数量，防止渲染太多卡死
+            renderList(results.slice(0, 50));
         }
 
-        resultArea.innerHTML = data.map(item => `
-            <div class="word-card">
-                <div class="word-header">
-                    <div class="word-text">${item.w}</div>
-                    <div class="phonetic">${item.i}</div>
+        // 4. 发音功能
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // 5. 错误处理显示
+        function showError(title, msg) {
+            listContainer.innerHTML = `
+                <div class="error-state">
+                    <div class="error-title">⚠️ ${title}</div>
+                    <div class="error-desc">${msg}</div>
                 </div>
-                <div class="meaning">${item.m}</div>
-                ${item.g ? `<div class="synonyms">🔗 同义词: ${item.g}</div>` : ''}
-            </div>
-        `).join('');
-    }
-</script>
-
+            `;
+            statusBar.innerText = "Error";
+            statusBar.style.background = "#FF3B30";
+            statusBar.style.color = "white";
+        }
+    </script>
 </body>
 </html>
