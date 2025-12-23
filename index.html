@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab V-1 词库系统</title>
+    <script src="data.js"></script>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; }
+        body { font-family: system-ui; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        
+        /* 搜索框样式 */
+        .search-box {
+            width: 100%; padding: 12px; border: 2px solid #ddd;
+            border-radius: 8px; font-size: 16px; box-sizing: border-box;
+        }
+
+        /* 状态提示 */
+        #status { font-size: 12px; color: #64748b; margin-top: 5px; text-align: right; }
+
+        /* 单词卡片样式 */
+        .word-card {
+            background: white; padding: 15px; border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 15px;
+        }
+        .word-header { display: flex; justify-content: space-between; align-items: center; }
+        .word-text { font-size: 24px; font-weight: bold; color: var(--primary); }
+        .phonetic { color: #64748b; font-family: "Lucida Sans Unicode"; }
+        .meaning { margin: 10px 0; color: #1e293b; line-height: 1.5; }
+        .synonyms { font-size: 13px; color: #059669; background: #ecfdf5; padding: 5px 10px; border-radius: 4px; }
+        
+        .no-result { text-align: center; color: #94a3b8; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <input type="text" id="searchInput" class="search-box" placeholder="输入单词搜索 (A-Z)..." oninput="handleSearch()">
+    <div id="status">正在初始化...</div>
+    <div id="resultArea"></div>
+</div>
+
+<script>
+    // 2. 核心逻辑
+    const resultArea = document.getElementById('resultArea');
+    const statusText = document.getElementById('status');
+
+    // 页面加载后立即检查数据
+    window.onload = () => {
+        if (typeof DATABASE !== 'undefined') {
+            statusText.innerText = `已加载词库: ${DATABASE.length} 个单词`;
+        } else {
+            statusText.innerHTML = `<span style="color:red">错误：未发现 data.js 或文件格式错误</span>`;
+        }
+    };
+
+    function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase().trim();
+        
+        if (!query) {
+            resultArea.innerHTML = '';
+            return;
+        }
+
+        // 基于之前的高效搜索逻辑
+        const results = DATABASE.filter(item => 
+            item.w.toLowerCase().includes(query)
+        ).slice(0, 50); // 仅展示前50个防止卡顿
+
+        render(results);
+    }
+
+    function render(data) {
+        if (data.length === 0) {
+            resultArea.innerHTML = `<div class="no-result">未找到相关单词</div>`;
+            return;
+        }
+
+        resultArea.innerHTML = data.map(item => `
+            <div class="word-card">
+                <div class="word-header">
+                    <div class="word-text">${item.w}</div>
+                    <div class="phonetic">${item.i}</div>
+                </div>
+                <div class="meaning">${item.m}</div>
+                ${item.g ? `<div class="synonyms">🔗 同义词: ${item.g}</div>` : ''}
+            </div>
+        `).join('');
+    }
+</script>
+
+</body>
+</html>
