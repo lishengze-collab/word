@@ -1,24 +1,21 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>VV-2 Vocab</title>
+    <title>VV-3 Vocab</title>
     <style>
         :root {
-            /* iOS Fresh Green Theme - Outline Style */
+            /* iOS Fresh Green Theme - VV-3 Fine Line Style */
             --primary: #34C759;
-            --primary-active: #248A3D;
             --bg-body: #F2F2F7;
             --bg-card: #FFFFFF;
             --text-main: #1C1C1E;
             --text-sub: #8E8E93;
             --border: #E5E5EA;
-            --shadow: 0 8px 30px rgba(0,0,0,0.08);
-            
-            /* Safe Area Variables */
+            --shadow: 0 8px 30px rgba(0,0,0,0.06);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
@@ -46,36 +43,30 @@
             flex-direction: column;
         }
 
-        /* --- 顶部导航 (适配刘海屏) --- */
+        /* --- 顶部导航 (解决状态栏冲突) --- */
         .nav-bar {
-            padding-top: calc(12px + var(--safe-top));
+            padding-top: calc(10px + var(--safe-top));
             padding-bottom: 12px;
-            padding-left: 20px;
-            padding-right: 20px;
-            background: rgba(255,255,255,0.85);
+            text-align: center;
+            background: rgba(242, 242, 247, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 0.5px solid rgba(0,0,0,0.1);
             z-index: 100;
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
         }
-        .nav-title { 
-            font-weight: 700; 
-            font-size: 18px; 
-            color: var(--text-main);
-        }
-        .progress-pill {
-            font-size: 13px;
+        
+        .progress-indicator {
+            display: inline-block;
+            font-size: 14px;
             font-weight: 600;
             color: var(--primary);
+            letter-spacing: 0.5px;
+            padding: 4px 16px;
             border: 1px solid var(--primary);
-            padding: 4px 10px;
-            border-radius: 12px;
+            border-radius: 20px;
         }
 
-        /* --- 主视图容器 --- */
+        /* --- 主容器 --- */
         .view-container {
             flex: 1;
             position: relative;
@@ -87,7 +78,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: calc(100px + var(--safe-bottom)); /* 防止底部按钮遮挡 */
+            padding-bottom: calc(100px + var(--safe-bottom));
             display: none;
             opacity: 0;
             transition: opacity 0.2s ease;
@@ -103,12 +94,12 @@
 
         .flash-card {
             background: var(--bg-card);
-            border-radius: 24px;
+            border-radius: 28px;
             box-shadow: var(--shadow);
             padding: 40px 24px;
             text-align: center;
             position: relative;
-            min-height: 420px;
+            min-height: 440px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -118,219 +109,183 @@
         .count-badge {
             position: absolute;
             top: 20px;
-            right: 20px;
-            font-size: 12px;
+            right: 24px;
+            font-size: 11px;
             font-weight: 500;
             color: var(--text-sub);
-            background: var(--bg-body);
-            padding: 4px 10px;
-            border-radius: 8px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
         }
 
         .word-main { 
-            font-size: 38px; 
+            font-size: 40px; 
             font-weight: 800; 
-            margin-bottom: 6px; 
-            letter-spacing: -0.5px;
+            margin-bottom: 8px; 
+            letter-spacing: -0.8px;
         }
         .word-ipa { 
             font-family: "Menlo", monospace; 
             color: var(--text-sub); 
             font-size: 16px; 
-            margin-bottom: 24px; 
+            margin-bottom: 30px; 
         }
         .word-meaning { 
-            font-size: 19px; 
-            line-height: 1.5; 
+            font-size: 18px; 
+            line-height: 1.6; 
             margin-bottom: 30px; 
             color: var(--text-main); 
-            font-weight: 500;
+            font-weight: 400;
         }
         
-        /* 关联词区域 */
         .related-area {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-sub);
             padding-top: 20px;
             border-top: 1px solid var(--border);
         }
-        /* 有效链接样式 */
         .link-word {
             color: var(--primary);
-            text-decoration: none;
-            margin: 0 4px;
             cursor: pointer;
             font-weight: 600;
-            border-bottom: 1px dashed rgba(52, 199, 89, 0.3);
+            padding: 0 2px;
         }
-        /* 无效链接样式（纯文本） */
-        .plain-word {
-            color: var(--text-sub);
-            margin: 0 4px;
-        }
+        .plain-word { color: var(--text-sub); padding: 0 2px; }
 
-        /* 线性发音按钮 */
-        .audio-btn-outline {
-            width: 56px;
-            height: 56px;
+        /* 线性发音按钮 (VV-3 Optimized) */
+        .audio-btn-line {
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: transparent;
             color: var(--primary);
-            border: 2px solid var(--primary);
+            border: 1px solid var(--primary); /* 变细 */
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 24px;
-            transition: all 0.1s;
+            transition: all 0.2s;
         }
-        .audio-btn-outline:active {
-            background: rgba(52, 199, 89, 0.1);
-            transform: scale(0.95);
-        }
+        .audio-btn-line svg { width: 22px; height: 22px; fill: currentColor; }
+        .audio-btn-line:active { background: rgba(52, 199, 89, 0.08); transform: scale(0.92); }
 
-        /* --- 底部操作栏 (线性按钮) --- */
+        /* --- 底部操作栏 --- */
         .action-bar {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            padding: 16px 20px calc(16px + var(--safe-bottom));
+            padding: 16px 24px calc(16px + var(--safe-bottom));
             background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             display: flex;
             gap: 12px;
             z-index: 50;
             border-top: 0.5px solid var(--border);
         }
 
-        .btn-outline {
+        .btn-line {
             flex: 1;
             background: transparent;
             color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 17px;
+            border: 1px solid var(--primary); /* 线性 */
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 15px; /* 小一号 */
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.1s;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .btn-outline:active {
-            background: rgba(52, 199, 89, 0.1);
-            transform: scale(0.98);
-        }
-
-        /* 特殊：禁用状态 */
-        .btn-outline:disabled {
-            border-color: var(--text-sub);
-            color: var(--text-sub);
-            opacity: 0.5;
-        }
+        .btn-line:active { background: rgba(52, 199, 89, 0.08); transform: scale(0.96); }
+        .btn-line:disabled { border-color: var(--border); color: var(--text-sub); opacity: 0.5; }
 
         /* --- 2. 列表视图 --- */
         .search-container {
             position: sticky;
             top: 0;
             background: var(--bg-body);
-            padding-bottom: 10px;
+            padding-bottom: 12px;
             z-index: 10;
         }
         .search-input {
             width: 100%;
             padding: 12px 16px;
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             background: var(--bg-card);
-            font-size: 16px;
-            color: var(--text-main);
+            font-size: 15px;
             outline: none;
         }
         .list-item {
             background: var(--bg-card);
             padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 10px;
+            border-radius: 14px;
+            margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid transparent;
+            border: 1px solid var(--border);
         }
-        .list-item:active { border-color: var(--primary); }
-        
-        .list-word-col { flex: 1; min-width: 0; }
-        .list-word-text { font-weight: 700; font-size: 17px; margin-bottom: 4px; }
-        .list-word-mean { font-size: 13px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .list-stat {
-            font-size: 12px;
-            color: var(--text-sub);
-            background: var(--bg-body);
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-left: 10px;
-            white-space: nowrap;
-        }
+        .list-word-text { font-weight: 700; font-size: 17px; margin-bottom: 2px; }
+        .list-word-mean { font-size: 13px; color: var(--text-sub); }
+        .list-stat { font-size: 10px; color: var(--text-sub); font-weight: 600; }
 
-        /* --- 底部 Tab --- */
-        /* 由于功能键很大，Tab 可以简化或缩小，这里为了保持 VV-1 逻辑，保留但在卡片页隐藏，仅在列表页显示或浮动切换 */
-        .tab-floater {
+        /* --- Tab Switcher --- */
+        .mode-floater {
             position: fixed;
-            top: calc(12px + var(--safe-top));
-            right: 20px;
+            top: calc(10px + var(--safe-top));
+            right: 16px;
             z-index: 101;
-            background: transparent;
         }
-        .tab-switch-btn {
-            font-size: 14px;
-            color: var(--primary);
-            font-weight: 600;
-            padding: 6px 12px;
-            border: 1px solid var(--primary);
-            border-radius: 20px;
-            background: rgba(255,255,255,0.5);
-            backdrop-filter: blur(5px);
+        .btn-mode {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: 700;
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-card);
+            text-transform: uppercase;
         }
 
-        /* --- 弹窗 (Modal) --- */
+        /* --- Modal --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
             z-index: 200;
             display: none;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s;
+            align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s;
         }
         .modal-overlay.show { display: flex; opacity: 1; }
-        
         .ios-modal {
             background: var(--bg-card);
-            width: 85%;
-            max-width: 340px;
+            width: 80%;
+            max-width: 320px;
             border-radius: 24px;
-            padding: 28px 24px;
+            padding: 30px 20px;
             text-align: center;
+            box-shadow: var(--shadow);
             transform: scale(0.9);
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
         }
         .modal-overlay.show .ios-modal { transform: scale(1); }
         .modal-btn {
-            margin-top: 24px;
+            margin-top: 25px;
             width: 100%;
-            padding: 12px;
-            border: 2px solid var(--primary);
+            padding: 10px;
+            border: 1px solid var(--primary);
             color: var(--primary);
             background: transparent;
-            border-radius: 14px;
+            border-radius: 10px;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 14px;
+            text-transform: uppercase;
         }
 
     </style>
@@ -338,61 +293,45 @@
 <body>
 
     <div class="nav-bar">
-        <div class="nav-title">VV-2</div>
-        <div class="progress-pill" id="daily-progress">0 / 200</div>
+        <div class="progress-indicator" id="daily-progress">0 / 200</div>
     </div>
 
-    <div class="tab-floater">
-        <button class="tab-switch-btn" id="mode-btn" onclick="toggleMode()">列表模式</button>
+    <div class="mode-floater">
+        <button class="btn-mode" id="mode-btn" onclick="toggleMode()">LIST</button>
     </div>
 
     <div class="view-container">
-        
-        <div id="card-view" class="view active">
-            </div>
+        <div id="card-view" class="view active"></div>
 
         <div id="list-view" class="view">
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search A-Z..." oninput="filterList(this.value)">
+                <input type="text" class="search-input" placeholder="Search dictionary..." oninput="filterList(this.value)">
             </div>
-            <div id="list-content">
-                </div>
+            <div id="list-content"></div>
         </div>
-
     </div>
 
     <div class="action-bar" id="card-actions">
-        <button class="btn-outline" id="prev-btn" onclick="prevCard()">← 上一个</button>
-        <button class="btn-outline" id="next-btn" onclick="nextCard()">Next →</button>
+        <button class="btn-line" id="prev-btn" onclick="prevCard()">PREVIOUS</button>
+        <button class="btn-line" id="next-btn" onclick="nextCard()">NEXT</button>
     </div>
 
     <div class="modal-overlay" id="modal" onclick="closeModal()">
         <div class="ios-modal" onclick="event.stopPropagation()">
-            <div class="word-main" id="modal-word" style="font-size: 28px;">Word</div>
+            <div class="word-main" id="modal-word" style="font-size: 26px;"></div>
             <div class="word-ipa" id="modal-ipa"></div>
-            <div class="word-meaning" id="modal-mean" style="font-size: 16px; margin-bottom: 10px;">Meaning</div>
-            <button class="modal-btn" onclick="closeModal()">Close</button>
+            <div class="word-meaning" id="modal-mean" style="font-size: 15px;"></div>
+            <button class="modal-btn" onclick="closeModal()">CLOSE</button>
         </div>
     </div>
 
     <script src="data.js"></script>
 
     <script>
-        // --- VV-2 核心逻辑 ---
-
-        // 单词索引 Set (用于快速检查关联词是否存在)
         let WORD_INDEX = new Set();
         let ALL_WORDS_SORTED = [];
+        const STATE = { todayBatch: [], currentIndex: 0, progress: {}, lastDate: null };
 
-        // 状态管理
-        const STATE = {
-            todayBatch: [],      
-            currentIndex: 0,     
-            progress: {},        // { "word": count }
-            lastDate: null
-        };
-
-        // DOM
         const cardView = document.getElementById('card-view');
         const listView = document.getElementById('list-view');
         const listContent = document.getElementById('list-content');
@@ -401,28 +340,18 @@
         const modeBtn = document.getElementById('mode-btn');
         const prevBtn = document.getElementById('prev-btn');
 
-        // 初始化
         window.onload = function() {
-            if (typeof DATABASE === 'undefined' || DATABASE.length === 0) {
-                alert("Data Error: DATABASE not found.");
-                return;
-            }
-
-            // 1. 建立索引 & 排序全量列表 (A-Z)
+            if (typeof DATABASE === 'undefined') return;
             DATABASE.forEach(item => WORD_INDEX.add(item.w.toLowerCase()));
             ALL_WORDS_SORTED = [...DATABASE].sort((a, b) => a.w.localeCompare(b.w));
-
-            // 2. 加载状态 & 生成任务
             loadState();
             generateDailyBatch();
-
-            // 3. 初始渲染
             renderCard();
             renderListLazy(); 
         };
 
         function loadState() {
-            const saved = localStorage.getItem('vv2_state'); // 升级key避免冲突
+            const saved = localStorage.getItem('vv3_state');
             if (saved) {
                 const data = JSON.parse(saved);
                 STATE.progress = data.progress || {};
@@ -433,233 +362,124 @@
         }
 
         function saveState() {
-            localStorage.setItem('vv2_state', JSON.stringify(STATE));
+            localStorage.setItem('vv3_state', JSON.stringify(STATE));
         }
 
-        // 生成任务逻辑 (保持 VV-1 逻辑: 60%新 + 40%旧)
         function generateDailyBatch() {
             const today = new Date().toDateString();
             if (STATE.lastDate !== today || STATE.todayBatch.length === 0) {
-                const newWordsNeeded = 120;
-                const oldWordsNeeded = 80;
-                let newBatch = [], oldBatch = [];
-
-                for (let i = 0; i < DATABASE.length; i++) {
-                    const word = DATABASE[i].w;
-                    if (STATE.progress[word]) oldBatch.push(i);
+                const newBatch = [], oldBatch = [];
+                DATABASE.forEach((item, i) => {
+                    if (STATE.progress[item.w]) oldBatch.push(i);
                     else newBatch.push(i);
-                }
-
+                });
                 const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
-                let selectedNew = shuffle(newBatch).slice(0, newWordsNeeded);
-                let selectedOld = shuffle(oldBatch).slice(0, oldWordsNeeded);
-
-                if (selectedOld.length < oldWordsNeeded) {
-                    const moreNew = shuffle(newBatch).slice(newWordsNeeded, newWordsNeeded + (oldWordsNeeded - selectedOld.length));
-                    selectedNew = selectedNew.concat(moreNew);
-                }
-
+                let selectedNew = shuffle(newBatch).slice(0, 120);
+                let selectedOld = shuffle(oldBatch).slice(0, 80);
                 STATE.todayBatch = selectedNew.concat(selectedOld);
                 STATE.lastDate = today;
                 STATE.currentIndex = 0;
                 saveState();
             }
-            updateUI();
+            dailyProgress.innerText = `${STATE.currentIndex} / ${STATE.todayBatch.length}`;
         }
 
-        // 渲染卡片
         function renderCard() {
-            if (STATE.todayBatch.length === 0) return;
-
-            // 完成状态
             if (STATE.currentIndex >= STATE.todayBatch.length) {
-                cardView.innerHTML = `
-                    <div class="flash-card" style="justify-content:center; border: 2px solid var(--primary);">
-                        <div style="font-size:60px;">🎉</div>
-                        <h2>今日任务达成</h2>
-                        <p style="color:var(--text-sub)">Take a break!</p>
-                    </div>`;
+                cardView.innerHTML = `<div class="flash-card" style="justify-content:center;"><h2>COMPLETED!</h2><p style="color:var(--text-sub)">Well done for today.</p></div>`;
                 cardActions.style.display = 'none';
                 return;
-            } else {
-                cardActions.style.display = 'flex';
             }
-
-            const dbIndex = STATE.todayBatch[STATE.currentIndex];
-            const item = DATABASE[dbIndex];
+            cardActions.style.display = 'flex';
+            const item = DATABASE[STATE.todayBatch[STATE.currentIndex]];
             const count = STATE.progress[item.w] || 0;
 
-            // 关联词处理 (仅显示存在的词为链接)
-            let relatedHtml = '无';
+            let relatedHtml = 'NONE';
             if (item.g) {
                 relatedHtml = item.g.split(',').map(rawW => {
                     const w = rawW.trim();
-                    // 检查词库是否存在该词
-                    if (WORD_INDEX.has(w.toLowerCase())) {
-                        return `<span class="link-word" onclick="showPopup('${w}')">${w}</span>`;
-                    } else {
-                        return `<span class="plain-word">${w}</span>`;
-                    }
-                }).join(''); // 去掉逗号，用间距隔开，或者保留逗号
-                // 这里为了美观，上面map返回span，join可以加逗号
-                relatedHtml = item.g.split(',').map(rawW => {
-                     const w = rawW.trim();
-                     if (WORD_INDEX.has(w.toLowerCase())) {
-                        return `<span class="link-word" onclick="showPopup('${w}')">${w}</span>`;
-                     } else {
-                        return `<span class="plain-word">${w}</span>`;
-                     }
+                    return WORD_INDEX.has(w.toLowerCase()) ? `<span class="link-word" onclick="showPopup('${w}')">${w}</span>` : `<span class="plain-word">${w}</span>`;
                 }).join(', ');
             }
 
             cardView.innerHTML = `
                 <div class="flash-card">
-                    <div class="count-badge">背过 ${count} 次</div>
-                    
-                    <div style="margin-top: 50px;">
-                        <div class="word-main">${item.w}</div>
+                    <div class="count-badge">REVIEWED: ${count}</div>
+                    <div style="margin-top: 40px;">
+                        <div class="word-main">${item.word || item.w}</div>
                         <div class="word-ipa">${item.i || ''}</div>
                         <div class="word-meaning">${item.m}</div>
                     </div>
-
-                    <div style="margin-bottom: 10px;">
-                        <button class="audio-btn-outline" onclick="playAudio('${item.w}')">
-                            🔊
+                    <div>
+                        <button class="audio-btn-line" onclick="playAudio('${item.w}')">
+                            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         </button>
-                        <div class="related-area">
-                            关联词: ${relatedHtml}
-                        </div>
+                        <div class="related-area">RELATED: ${relatedHtml}</div>
                     </div>
                 </div>
             `;
-            
-            // 更新按钮状态
             prevBtn.disabled = (STATE.currentIndex === 0);
-            updateUI();
-        }
-
-        // 上一个
-        window.prevCard = function() {
-            if (STATE.currentIndex > 0) {
-                STATE.currentIndex--;
-                saveState();
-                renderCard();
-            }
-        };
-
-        // 下一个 (Next)
-        window.nextCard = function() {
-            if (STATE.currentIndex < STATE.todayBatch.length) {
-                const dbIndex = STATE.todayBatch[STATE.currentIndex];
-                const item = DATABASE[dbIndex];
-
-                // 记录次数
-                if (!STATE.progress[item.w]) STATE.progress[item.w] = 0;
-                STATE.progress[item.w]++;
-
-                STATE.currentIndex++;
-                saveState();
-                renderCard();
-                
-                // 如果在列表模式，也刷新一下计数显示
-                if(listView.classList.contains('active')) {
-                   // 可选：实时刷新列表
-                }
-            }
-        };
-
-        function updateUI() {
             dailyProgress.innerText = `${STATE.currentIndex} / ${STATE.todayBatch.length}`;
         }
 
-        window.playAudio = function(text) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.speak(utterance);
+        window.prevCard = () => { if (STATE.currentIndex > 0) { STATE.currentIndex--; saveState(); renderCard(); } };
+        window.nextCard = () => {
+            const item = DATABASE[STATE.todayBatch[STATE.currentIndex]];
+            STATE.progress[item.w] = (STATE.progress[item.w] || 0) + 1;
+            STATE.currentIndex++;
+            saveState();
+            renderCard();
         };
 
-        // --- 列表逻辑 (A-Z) ---
+        window.playAudio = (t) => {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        };
+
         function renderListLazy(items = ALL_WORDS_SORTED) {
-            // 性能优化：只渲染前 200 个，搜索时才全量筛选
-            const limit = 200;
-            const displayItems = items.slice(0, limit);
-            
             let html = '';
-            displayItems.forEach(item => {
+            items.slice(0, 150).forEach(item => {
                 const count = STATE.progress[item.w] || 0;
                 html += `
                     <div class="list-item" onclick="showPopup('${item.w}')">
-                        <div class="list-word-col">
+                        <div>
                             <div class="list-word-text">${item.w}</div>
                             <div class="list-word-mean">${item.m}</div>
                         </div>
-                        <div class="list-stat">👀 ${count}</div>
+                        <div class="list-stat">${count}</div>
                     </div>
                 `;
             });
-            
-            if (items.length > limit) {
-                html += `<div style="text-align:center; padding:20px; color:var(--text-sub);">...输入搜索查看更多...</div>`;
-            }
             listContent.innerHTML = html;
         }
 
-        window.filterList = function(query) {
-            query = query.toLowerCase().trim();
-            if (!query) {
-                renderListLazy(ALL_WORDS_SORTED);
-                return;
-            }
-            const filtered = ALL_WORDS_SORTED.filter(item => item.w.toLowerCase().includes(query));
+        window.filterList = (q) => {
+            const query = q.toLowerCase().trim();
+            const filtered = query ? ALL_WORDS_SORTED.filter(i => i.w.toLowerCase().includes(query)) : ALL_WORDS_SORTED;
             renderListLazy(filtered);
         };
 
-        // --- 模式切换 ---
-        window.toggleMode = function() {
-            if (cardView.classList.contains('active')) {
-                // 切换到列表
-                cardView.classList.remove('active');
-                cardActions.style.display = 'none';
-                listView.classList.add('active');
-                modeBtn.innerText = "背诵模式";
-                // 刷新列表（为了更新计数）
-                filterList(document.querySelector('.search-input').value);
-            } else {
-                // 切换到背诵
-                listView.classList.remove('active');
-                cardView.classList.add('active');
-                cardActions.style.display = (STATE.currentIndex >= STATE.todayBatch.length) ? 'none' : 'flex';
-                modeBtn.innerText = "列表模式";
-            }
+        window.toggleMode = () => {
+            const isCard = cardView.classList.contains('active');
+            cardView.classList.toggle('active', !isCard);
+            listView.classList.toggle('active', isCard);
+            cardActions.style.display = isCard ? 'none' : 'flex';
+            modeBtn.innerText = isCard ? 'BACK' : 'LIST';
         };
 
-        // --- 弹窗逻辑 ---
-        window.showPopup = function(wordText) {
-            const overlay = document.getElementById('modal');
-            const wEl = document.getElementById('modal-word');
-            const iEl = document.getElementById('modal-ipa');
-            const mEl = document.getElementById('modal-mean');
-
-            // 查找单词
-            const target = DATABASE.find(i => i.w.toLowerCase() === wordText.toLowerCase());
-
-            if (target) {
-                wEl.innerText = target.w;
-                iEl.innerText = target.i || '';
-                mEl.innerText = target.m;
-                playAudio(target.w);
-            } else {
-                // 理论上前面过滤了，这里是兜底
-                return; 
-            }
-            overlay.classList.add('show');
+        window.showPopup = (w) => {
+            const target = DATABASE.find(i => i.w.toLowerCase() === w.toLowerCase());
+            if (!target) return;
+            document.getElementById('modal-word').innerText = target.w;
+            document.getElementById('modal-ipa').innerText = target.i || '';
+            document.getElementById('modal-mean').innerText = target.m;
+            playAudio(target.w);
+            document.getElementById('modal').classList.add('show');
         };
 
-        window.closeModal = function() {
-            document.getElementById('modal').classList.remove('show');
-        };
-
+        window.closeModal = () => document.getElementById('modal').classList.remove('show');
     </script>
 </body>
 </html>
