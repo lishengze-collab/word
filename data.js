@@ -1274,7 +1274,7 @@
         {w:"purpose", i:"/ˈpɜːpəs/", m:"n. 目的", g:"aim,goal"},
         {w:"pursue", i:"/pəˈsjuː/", m:"vt. 追求；追赶", g:"follow,chase"},
         {w:"pursuit", i:"/pəˈsjuːt/", m:"n. 追求；消遣", g:"search,hobby"},
-        {w:"puzzle", i:"/ˈpʌzl/", m:"n. 谜 v. 使迷惑", g:"riddle,confuse"}
+        {w:"puzzle", i:"/ˈpʌzl/", m:"n. 谜 v. 使迷惑", g:"riddle,confuse"},
         {w:"quake", i:"/kweɪk/", m:"v/n. 震动；颤抖", g:"shake,shiver"},
         {w:"qualification", i:"/ˌkwɒlɪfɪˈkeɪʃn/", m:"n. 资格；限制条件", g:"ability,fitness"},
         {w:"qualify", i:"/ˈkwɒlɪfaɪ/", m:"v. 使具有资格", g:"fit,prepare"},
@@ -1702,7 +1702,7 @@
         {w:"symmetry", i:"/ˈsɪmətri/", m:"n. 对称", g:"balance,harmony"},
         {w:"sympathy", i:"/ˈsɪmpəθi/", m:"n. 同情", g:"pity,compassion"},
         {w:"symptom", i:"/ˈsɪmptəm/", m:"n. 症状；征兆", g:"sign,indication"},
-        {w:"synthetic", i:"/sɪnˈθetɪk/", m:"adj. 合成的", g:"artificial,fake"}
+        {w:"synthetic", i:"/sɪnˈθetɪk/", m:"adj. 合成的", g:"artificial,fake"},
         {w:"tackle", i:"/ˈtækl/", m:"vt. 处理；对付 n. 滑轮", g:"handle,deal with"},
         {w:"tame", i:"/teɪm/", m:"adj. 驯服的 vt. 驯养", g:"docile,domesticated"},
         {w:"tangible", i:"/ˈtændʒəbl/", m:"adj. 有形的；切实的", g:"concrete,real"},
@@ -1863,6 +1863,7 @@
         {w:"zeal", i:"/ziːl/", m:"n. 热心；热情", g:"enthusiasm,passion"},
         {w:"zone", i:"/zəʊn/", m:"n. 地区", g:"area,region"}
     ];
+
 
 
 
