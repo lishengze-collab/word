@@ -351,7 +351,7 @@
         {w:"duplicate", i:"/ˈdjuːplɪkeɪt/", m:"v/n. 复制", g:"copy,reproduce"},
         {w:"durable", i:"/ˈdjʊərəbl/", m:"adj. 耐用的；持久的", g:"lasting,sturdy"},
         {w:"duration", i:"/djuˈreɪʃn/", m:"n. 持续时间", g:"period,length"},
-        {w:"dynamic", i:"/daɪˈnæmɪk/", m:"adj. 动态的；有活力的", g:"active,energetic"}
+        {w:"dynamic", i:"/daɪˈnæmɪk/", m:"adj. 动态的；有活力的", g:"active,energetic"},
         {w:"earnest", i:"/ˈɜːrnɪst/", m:"adj. 认真的；热心的", g:"serious,sincere"},
         {w:"ebb", i:"/eb/", m:"v/n. 退潮；衰退", g:"recede,decline"},
         {w:"eccentric", i:"/ɪkˈsentrɪk/", m:"adj. 古怪的 n. 怪人", g:"odd,peculiar"},
@@ -680,7 +680,7 @@
         {w:"hurdle", i:"/ˈhɜːdl/", m:"n. 障碍 v. 跨越", g:"obstacle,barrier"},
         {w:"hurl", i:"/hɜːl/", m:"v. 猛投", g:"throw,toss"},
         {w:"hybrid", i:"/ˈhaɪbrɪd/", m:"n/adj. 混合物；混合的", g:"mixture,cross"},
-        {w:"hypothesis", i:"/haɪˈpɒθəsɪs/", m:"n. 假设", g:"theory,assumption"}
+        {w:"hypothesis", i:"/haɪˈpɒθəsɪs/", m:"n. 假设", g:"theory,assumption"},
         {w:"ideal", i:"/aɪˈdiːəl/", m:"adj. 理想的 n. 理想", g:"perfect,vision"},
         {w:"identical", i:"/aɪˈdentɪkl/", m:"adj. 完全相同的", g:"same,equal"},
         {w:"identify", i:"/aɪˈdentɪfaɪ/", m:"v. 识别；鉴定", g:"recognize,detect"},
@@ -1863,5 +1863,6 @@
         {w:"zeal", i:"/ziːl/", m:"n. 热心；热情", g:"enthusiasm,passion"},
         {w:"zone", i:"/zəʊn/", m:"n. 地区", g:"area,region"}
     ];
+
 
 
