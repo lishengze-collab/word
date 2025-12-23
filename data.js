@@ -12,7 +12,7 @@
         {w:"defiance", i:"/dɪˈfaɪəns/", m:"n. 蔑视；反抗", g:"resistance"},
         {w:"ambush", i:"/ˈæmbʊʃ/", m:"n. 埋伏；伏击", g:"trap"},
         {w:"opacity", i:"/əʊˈpæsəti/", m:"n. 不透明；晦涩", g:"obscurity"},
-        {w:"conscientious", i:"/ˌkɒnʃiˈenʃəs/", m:"adj. 认真的；尽责的", g:"diligent"}
+        {w:"conscientious", i:"/ˌkɒnʃiˈenʃəs/", m:"adj. 认真的；尽责的", g:"diligent"},
         {w:"abbreviate", i:"/əˈbriːvieɪt/", m:"vt. 缩写，使省略", g:"shorten,curtail"},
         {w:"abide", i:"/əˈbaɪd/", m:"vi. 遵守；忍受", g:"endure,comply"},
         {w:"abrupt", i:"/əˈrʌpt/", m:"adj. 突然的；唐突的", g:"sudden,unexpected"},
