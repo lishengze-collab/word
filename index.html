@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>VV-7 Ultra</title>
+    <title>Optimized Version 1</title>
     <style>
         :root {
             --primary: #34C759;
@@ -42,13 +42,13 @@
             flex-direction: column;
         }
 
-        /* --- Header --- */
+        /* --- Header: 适配灵动岛与状态栏 --- */
         .header-bar {
             padding-top: calc(35px + var(--safe-top));
             padding-bottom: 15px;
             padding-left: 24px;
             padding-right: 24px;
-            background: rgba(242, 242, 247, 0.8);
+            background: rgba(242, 242, 247, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
@@ -56,15 +56,12 @@
             align-items: center;
             z-index: 100;
             border-bottom: 0.5px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
 
         .progress-indicator {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 5px 14px;
-            border-radius: 20px;
+            font-size: 13px; font-weight: 700; color: var(--primary);
+            border: 1px solid var(--primary); padding: 5px 14px; border-radius: 20px;
         }
 
         .btn-mode-top {
@@ -74,14 +71,14 @@
             background: transparent; text-transform: uppercase; cursor: pointer;
         }
 
-        /* --- Container --- */
+        /* --- View Container --- */
         .view-container { flex: 1; position: relative; overflow: hidden; }
         
         .view {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow-y: auto; padding: 20px;
-            padding-bottom: calc(120px + var(--safe-bottom));
-            display: none; opacity: 0; transition: opacity 0.2s ease;
+            padding-bottom: calc(140px + var(--safe-bottom));
+            display: none; opacity: 0; transition: opacity 0.25s ease;
         }
         .view.active { display: block; opacity: 1; }
 
@@ -95,85 +92,84 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.03);
         }
         
-        /* 30s 倒计时条 */
         .stay-timer-bar {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 0%; height: 3px; background: var(--primary);
+            width: 0%; height: 4px; background: var(--primary);
             transition: width 30s linear; border-radius: 0 0 2px 2px;
         }
 
         .count-badge { position: absolute; top: 24px; right: 24px; font-size: 10px; font-weight: 700; color: var(--text-sub); }
-        .word-main { font-size: 42px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+        .word-main { font-size: 44px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
         .red-text { color: var(--alert) !important; }
         .word-ipa { font-family: "Menlo", monospace; color: var(--text-sub); font-size: 15px; margin-bottom: 30px; }
-        .word-meaning { font-size: 18px; line-height: 1.6; margin-bottom: 30px; }
+        .word-meaning { font-size: 19px; line-height: 1.6; margin-bottom: 30px; }
         .related-area { font-size: 13px; color: var(--text-sub); padding-top: 20px; border-top: 1px solid var(--border); }
-        .link-word { color: var(--primary); cursor: pointer; font-weight: 600; padding: 0 2px; }
+        .link-word { color: var(--primary); cursor: pointer; font-weight: 600; padding: 0 2px; text-decoration: underline; }
 
         .audio-btn-line {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: transparent; color: var(--primary); border: 1px solid var(--primary);
+            width: 48px; height: 48px; border-radius: 50%;
+            background: transparent; color: var(--primary); border: 1.2px solid var(--primary);
             margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center;
         }
-        .audio-btn-line svg { width: 18px; height: 18px; fill: currentColor; }
+        .audio-btn-line svg { width: 20px; height: 20px; fill: currentColor; }
 
         /* --- Action Bar --- */
         .action-bar {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 16px 24px calc(25px + var(--safe-bottom));
+            padding: 16px 24px calc(30px + var(--safe-bottom));
             background: transparent; display: flex; gap: 15px; z-index: 101;
-            pointer-events: none; /* 防止遮挡列表点击 */
         }
         .btn-line {
             flex: 1; background: var(--bg-card); color: var(--primary); border: 1.5px solid var(--primary);
-            padding: 14px; border-radius: 30px; font-size: 14px; font-weight: 700;
+            padding: 15px; border-radius: 30px; font-size: 14px; font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.8px; transition: 0.2s;
-            pointer-events: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer;
         }
-        .btn-line:active { opacity: 0.5; transform: scale(0.98); }
+        .btn-line:active { opacity: 0.5; transform: scale(0.96); }
+        .btn-line:disabled { border-color: var(--border); color: var(--text-sub); opacity: 0.4; }
 
         /* --- List View --- */
-        .search-container { position: sticky; top: 0; background: var(--bg-body); padding-bottom: 12px; z-index: 10; }
+        .search-container { position: sticky; top: 0; background: var(--bg-body); padding-bottom: 15px; z-index: 10; }
         .search-input {
-            width: 100%; padding: 14px; border-radius: 20px;
-            border: 1px solid var(--border); background: var(--bg-card); font-size: 15px;
+            width: 100%; padding: 16px; border-radius: 20px;
+            border: 1px solid var(--border); background: var(--bg-card); font-size: 16px;
         }
         .list-item {
-            background: var(--bg-card); padding: 16px; border-radius: 16px;
+            background: var(--bg-card); padding: 18px; border-radius: 18px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); margin-bottom: 8px;
+            border: 1px solid var(--border); margin-bottom: 10px; transition: 0.1s;
         }
+        .list-item:active { transform: scale(0.98); background: rgba(0,0,0,0.02); }
 
-        /* --- Modal & Collins --- */
+        /* --- Modal & Collins Panel --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
             z-index: 200; display: none; align-items: center; justify-content: center;
             opacity: 0; transition: 0.2s;
         }
         .modal-overlay.show { display: flex; opacity: 1; }
         .ios-modal {
-            background: var(--bg-card); width: 85%; max-width: 320px;
-            border-radius: 30px; padding: 35px 24px; text-align: center;
+            background: var(--bg-card); width: 88%; max-width: 340px;
+            border-radius: 32px; padding: 35px 24px; text-align: center;
         }
-        .modal-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
+        .modal-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
         .modal-btn {
-            width: 100%; padding: 12px; border: 1.5px solid var(--primary);
+            width: 100%; padding: 14px; border: 1.5px solid var(--primary);
             color: var(--primary); background: transparent; border-radius: 25px;
-            font-weight: 700; font-size: 12px; text-transform: uppercase;
+            font-weight: 700; font-size: 13px; text-transform: uppercase;
         }
         .btn-secondary { border-color: var(--border); color: var(--text-sub); }
 
-        /* Collins Panel */
         #collins-panel {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh;
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 88vh;
             background: var(--bg-card); border-top-left-radius: 30px; border-top-right-radius: 30px;
-            z-index: 300; transition: bottom 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            z-index: 300; transition: bottom 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
         }
         #collins-panel.open { bottom: 0; }
-        .panel-header { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); }
-        .panel-handle { width: 40px; height: 5px; background: var(--border); border-radius: 10px; margin: 0 auto 10px; }
+        .panel-header { padding: 18px; text-align: center; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .panel-handle { width: 36px; height: 5px; background: var(--border); border-radius: 10px; margin: 0 auto 12px; }
     </style>
 </head>
 <body>
@@ -187,7 +183,7 @@
         <div id="card-view" class="view active"></div>
         <div id="list-view" class="view" onscroll="handleListScroll(this)">
             <div class="search-container">
-                <input type="text" id="search-in" class="search-input" placeholder="Search 1800+ words..." oninput="handleSearch(this.value)">
+                <input type="text" id="search-in" class="search-input" placeholder="搜索 1800+ 词汇..." oninput="handleSearch(this.value)">
             </div>
             <div id="list-content"></div>
         </div>
@@ -213,9 +209,9 @@
     <div id="collins-panel">
         <div class="panel-header" onclick="closeCollins()">
             <div class="panel-handle"></div>
-            <span style="font-size:12px; font-weight:800; color:var(--text-sub)">COLLINS DICTIONARY</span>
+            <span style="font-size:11px; font-weight:800; color:var(--text-sub); text-transform:uppercase; letter-spacing:1px;">Collins Dictionary</span>
         </div>
-        <iframe id="collins-frame" src="" style="width:100%; height:calc(100% - 60px); border:none;"></iframe>
+        <iframe id="collins-frame" src="" style="width:100%; height:calc(100% - 70px); border:none;" loading="lazy"></iframe>
     </div>
 
     <script src="data.js"></script>
@@ -242,40 +238,37 @@
         };
 
         function loadState() {
-            const saved = localStorage.getItem('vv7_state');
-            if (saved) {
-                Object.assign(STATE, JSON.parse(saved));
-            }
+            const saved = localStorage.getItem('ov1_state');
+            if (saved) Object.assign(STATE, JSON.parse(saved));
         }
-
-        function saveState() { localStorage.setItem('vv7_state', JSON.stringify(STATE)); }
+        function saveState() { localStorage.setItem('ov1_state', JSON.stringify(STATE)); }
 
         function generateDailyBatch() {
             const today = new Date().toDateString();
             if (STATE.lastDate !== today || STATE.todayBatch.length === 0) {
-                const newBatch = [], oldBatch = [];
+                const newWords = [], oldWords = [];
                 DATABASE.forEach((item, i) => {
-                    if (STATE.progress[item.w] || STATE.forcedOld.includes(item.w)) oldBatch.push(i);
-                    else newBatch.push(i);
+                    if (STATE.progress[item.w] || STATE.forcedOld.includes(item.w)) oldWords.push(i);
+                    else newWords.push(i);
                 });
                 const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
-                STATE.todayBatch = shuffle(newBatch).slice(0, 120).concat(shuffle(oldBatch).slice(0, 80));
-                STATE.lastDate = today;
-                STATE.currentIndex = 0;
-                STATE.forcedOld = [];
+                STATE.todayBatch = shuffle(newWords).slice(0, 120).concat(shuffle(oldWords).slice(0, 80));
+                STATE.lastDate = today; STATE.currentIndex = 0; STATE.forcedOld = [];
                 saveState();
             }
             updateProgressText();
         }
 
         function updateProgressText() {
-            dailyProgress.innerText = `${STATE.currentIndex} / ${STATE.todayBatch.length}`;
+            document.getElementById('daily-progress').innerText = `${STATE.currentIndex} / ${STATE.todayBatch.length}`;
         }
 
         function startStayTimer(word) {
             const bar = document.getElementById('stay-timer-line');
-            if(bar) { bar.style.transition = 'none'; bar.style.width = '0%'; 
-                      setTimeout(()=> { bar.style.transition = 'width 30s linear'; bar.style.width = '100%'; }, 50); }
+            if(bar) { 
+                bar.style.transition = 'none'; bar.style.width = '0%'; bar.style.background = 'var(--primary)';
+                setTimeout(()=> { bar.style.transition = 'width 30s linear'; bar.style.width = '100%'; }, 50); 
+            }
             if(stayTimer) clearTimeout(stayTimer);
             stayTimer = setTimeout(() => {
                 if(!STATE.forcedOld.includes(word)) { STATE.forcedOld.push(word); saveState(); }
@@ -284,19 +277,28 @@
         }
 
         function renderCard() {
+            const container = document.getElementById('card-view');
+            const actionBar = document.getElementById('card-actions');
+            
             if (STATE.currentIndex >= STATE.todayBatch.length) {
-                cardView.innerHTML = `<div class="flash-card" style="justify-content:center;"><h2>ALL DONE!</h2></div>`;
-                cardActions.style.display = 'none';
+                container.innerHTML = `
+                    <div class="flash-card" style="justify-content:center;">
+                        <h2 style="margin-bottom:10px;">今日任务已完成</h2>
+                        <p style="color:var(--text-sub); font-size:14px;">你可以去 LIST 模式继续学习任意单词</p>
+                        <button class="modal-btn" style="margin-top:30px; width:150px; align-self:center;" onclick="STATE.currentIndex=0; renderCard();">再次复习</button>
+                    </div>`;
+                actionBar.style.display = 'none';
                 return;
             }
-            cardActions.style.display = 'flex';
+
+            actionBar.style.display = 'flex';
             const item = DATABASE[STATE.todayBatch[STATE.currentIndex]];
             const count = STATE.progress[item.w] || 0;
 
-            cardView.innerHTML = `
+            container.innerHTML = `
                 <div class="flash-card">
                     <div id="stay-timer-line" class="stay-timer-bar"></div>
-                    <div class="count-badge">REVIEWS: ${count}</div>
+                    <div class="count-badge">复习次数: ${count}</div>
                     <div style="margin-top: 40px;">
                         <div class="word-main ${count >= 5 ? 'red-text' : ''}">${item.w}</div>
                         <div class="word-ipa">${item.i || ''}</div>
@@ -306,39 +308,43 @@
                         <button class="audio-btn-line" onclick="playAudio('${item.w}')">
                             <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         </button>
-                        <div class="related-area">RELATED: ${item.g ? item.g.split(',').map(w=>`<span class="link-word" onclick="showPopup('${w.trim()}')">${w.trim()}</span>`).join(', ') : 'NONE'}</div>
+                        <div class="related-area">相关词: ${item.g ? item.g.split(',').map(w=>`<span class="link-word" onclick="showPopup('${w.trim()}')">${w.trim()}</span>`).join(', ') : '无'}</div>
                     </div>
                 </div>
             `;
             startStayTimer(item.w);
-            prevBtn.disabled = (STATE.currentIndex === 0);
+            document.getElementById('prev-btn').disabled = (STATE.currentIndex === 0);
             updateProgressText();
         }
 
-        // --- 分页加载列表 ---
+        // --- 列表分页逻辑 ---
         function renderList(append = false) {
+            const listContent = document.getElementById('list-content');
             if (!append) { listContent.innerHTML = ''; listPage = 1; }
             const start = (listPage - 1) * PAGE_SIZE;
-            const end = start + PAGE_SIZE;
-            const chunk = FILTERED_ITEMS.slice(start, end);
+            const chunk = FILTERED_ITEMS.slice(start, start + PAGE_SIZE);
 
             const fragment = document.createDocumentFragment();
             chunk.forEach(item => {
                 const count = STATE.progress[item.w] || 0;
                 const div = document.createElement('div');
                 div.className = 'list-item';
-                div.onclick = () => showPopup(item.w);
-                div.innerHTML = `<div><div class="list-word-text ${count>=5?'red-text':''}">${item.w}</div><div class="list-word-mean">${item.m}</div></div><div class="list-stat">REV: ${count}</div>`;
+                div.setAttribute('data-word', item.w);
+                div.innerHTML = `<div><div class="list-word-text ${count>=5?'red-text':''}">${item.w}</div><div class="list-word-mean" style="font-size:13px; color:var(--text-sub); margin-top:4px;">${item.m}</div></div><div class="list-stat" style="font-size:11px; font-weight:700; color:var(--text-sub);">次数: ${count}</div>`;
                 fragment.appendChild(div);
             });
             listContent.appendChild(fragment);
         }
 
+        // 事件委托：高效处理列表点击
+        document.getElementById('list-content').addEventListener('click', (e) => {
+            const item = e.target.closest('.list-item');
+            if (item) showPopup(item.getAttribute('data-word'));
+        });
+
         window.handleListScroll = (el) => {
-            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 100) {
-                if (listPage * PAGE_SIZE < FILTERED_ITEMS.length) {
-                    listPage++; renderList(true);
-                }
+            if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) {
+                if (listPage * PAGE_SIZE < FILTERED_ITEMS.length) { listPage++; renderList(true); }
             }
         };
 
@@ -349,21 +355,33 @@
         };
 
         window.toggleMode = () => {
-            const isCard = cardView.classList.contains('active');
-            cardView.classList.toggle('active', !isCard);
-            listView.classList.toggle('active', isCard);
-            cardActions.style.visibility = isCard ? 'hidden' : 'visible'; // 使用 visibility 彻底解决遮挡
-            modeBtn.innerText = isCard ? 'BACK' : 'LIST';
-            if(!isCard) { renderList(); document.getElementById('search-in').value = ''; }
+            const isCardActive = document.getElementById('card-view').classList.contains('active');
+            const cardView = document.getElementById('card-view');
+            const listView = document.getElementById('list-view');
+            const actionBar = document.getElementById('card-actions');
+            const modeBtn = document.getElementById('mode-btn');
+            
+            if (isCardActive) {
+                cardView.classList.remove('active');
+                listView.classList.add('active');
+                actionBar.style.display = 'none';
+                modeBtn.innerText = 'BACK';
+                renderList();
+            } else {
+                listView.classList.remove('active');
+                cardView.classList.add('active');
+                actionBar.style.display = 'flex';
+                modeBtn.innerText = 'LIST';
+                renderCard();
+            }
         };
 
         window.showPopup = (w) => {
             const target = DATABASE.find(i => i.w.toLowerCase() === w.toLowerCase());
             if (!target) return;
             const count = STATE.progress[target.w] || 0;
-            const modalWord = document.getElementById('modal-word');
-            modalWord.innerText = target.w;
-            modalWord.className = count >= 5 ? 'word-main red-text' : 'word-main';
+            document.getElementById('modal-word').innerText = target.w;
+            document.getElementById('modal-word').className = count >= 5 ? 'word-main red-text' : 'word-main';
             document.getElementById('modal-ipa').innerText = target.i || '';
             document.getElementById('modal-mean').innerText = target.m;
             document.getElementById('collins-trigger').onclick = () => openCollins(target.w);
@@ -379,7 +397,7 @@
 
         window.closeCollins = () => {
             document.getElementById('collins-panel').classList.remove('open');
-            setTimeout(() => { document.getElementById('collins-frame').src = ""; }, 400);
+            setTimeout(() => { document.getElementById('collins-frame').src = ""; }, 450);
         };
 
         window.prevCard = () => { if (STATE.currentIndex > 0) { STATE.currentIndex--; renderCard(); } };
@@ -393,6 +411,7 @@
         window.playAudio = (t) => {
             window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US';
+            u.rate = 0.9;
             window.speechSynthesis.speak(u);
         };
 
