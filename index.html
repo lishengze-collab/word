@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Optimized Version 1</title>
+    <title>OV2 Vocab</title>
     <style>
         :root {
             --primary: #34C759;
@@ -42,20 +42,17 @@
             flex-direction: column;
         }
 
-        /* --- Header: 适配灵动岛与状态栏 --- */
+        /* --- Header --- */
         .header-bar {
             padding-top: calc(35px + var(--safe-top));
             padding-bottom: 15px;
             padding-left: 24px;
             padding-right: 24px;
-            background: rgba(242, 242, 247, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--bg-body);
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 100;
-            border-bottom: 0.5px solid rgba(0,0,0,0.05);
             flex-shrink: 0;
         }
 
@@ -78,7 +75,7 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow-y: auto; padding: 20px;
             padding-bottom: calc(140px + var(--safe-bottom));
-            display: none; opacity: 0; transition: opacity 0.25s ease;
+            display: none; opacity: 0; transition: opacity 0.2s ease;
         }
         .view.active { display: block; opacity: 1; }
 
@@ -104,7 +101,10 @@
         .word-ipa { font-family: "Menlo", monospace; color: var(--text-sub); font-size: 15px; margin-bottom: 30px; }
         .word-meaning { font-size: 19px; line-height: 1.6; margin-bottom: 30px; }
         .related-area { font-size: 13px; color: var(--text-sub); padding-top: 20px; border-top: 1px solid var(--border); }
-        .link-word { color: var(--primary); cursor: pointer; font-weight: 600; padding: 0 2px; text-decoration: underline; }
+        
+        /* 相关词样式：只有词库有的才有下划线和颜色 */
+        .link-word-active { color: var(--primary); cursor: pointer; font-weight: 600; text-decoration: underline; }
+        .link-word-static { color: var(--text-sub); font-weight: 400; }
 
         .audio-btn-line {
             width: 48px; height: 48px; border-radius: 50%;
@@ -126,10 +126,16 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer;
         }
         .btn-line:active { opacity: 0.5; transform: scale(0.96); }
-        .btn-line:disabled { border-color: var(--border); color: var(--text-sub); opacity: 0.4; }
 
-        /* --- List View --- */
-        .search-container { position: sticky; top: 0; background: var(--bg-body); padding-bottom: 15px; z-index: 10; }
+        /* --- List View: 搜索栏优化 --- */
+        .search-container { 
+            position: sticky; top: -20px; /* 抵消 view 的 padding */
+            margin: 0 -20px; padding: 20px 20px 15px 20px;
+            background: var(--bg-body); /* 确保不透明背景遮挡后面单词 */
+            z-index: 10; 
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
         .search-input {
             width: 100%; padding: 16px; border-radius: 20px;
             border: 1px solid var(--border); background: var(--bg-card); font-size: 16px;
@@ -137,11 +143,10 @@
         .list-item {
             background: var(--bg-card); padding: 18px; border-radius: 18px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid var(--border); margin-bottom: 10px; transition: 0.1s;
+            border: 1px solid var(--border); margin-bottom: 10px;
         }
-        .list-item:active { transform: scale(0.98); background: rgba(0,0,0,0.02); }
 
-        /* --- Modal & Collins Panel --- */
+        /* --- Modal --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
@@ -159,17 +164,6 @@
             color: var(--primary); background: transparent; border-radius: 25px;
             font-weight: 700; font-size: 13px; text-transform: uppercase;
         }
-        .btn-secondary { border-color: var(--border); color: var(--text-sub); }
-
-        #collins-panel {
-            position: fixed; bottom: -100%; left: 0; width: 100%; height: 88vh;
-            background: var(--bg-card); border-top-left-radius: 30px; border-top-right-radius: 30px;
-            z-index: 300; transition: bottom 0.45s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
-        }
-        #collins-panel.open { bottom: 0; }
-        .panel-header { padding: 18px; text-align: center; border-bottom: 1px solid var(--border); cursor: pointer; }
-        .panel-handle { width: 36px; height: 5px; background: var(--border); border-radius: 10px; margin: 0 auto 12px; }
     </style>
 </head>
 <body>
@@ -185,7 +179,7 @@
             <div class="search-container">
                 <input type="text" id="search-in" class="search-input" placeholder="搜索 1800+ 词汇..." oninput="handleSearch(this.value)">
             </div>
-            <div id="list-content"></div>
+            <div id="list-content" style="margin-top: 15px;"></div>
         </div>
     </div>
 
@@ -200,23 +194,14 @@
             <div class="word-ipa" id="modal-ipa"></div>
             <div class="word-meaning" id="modal-mean"></div>
             <div class="modal-btn-group">
-                <button class="modal-btn" id="collins-trigger">COLLINS ONLINE</button>
-                <button class="modal-btn btn-secondary" onclick="closeModal()">CLOSE</button>
+                <button class="modal-btn" onclick="closeModal()">关闭</button>
             </div>
         </div>
     </div>
 
-    <div id="collins-panel">
-        <div class="panel-header" onclick="closeCollins()">
-            <div class="panel-handle"></div>
-            <span style="font-size:11px; font-weight:800; color:var(--text-sub); text-transform:uppercase; letter-spacing:1px;">Collins Dictionary</span>
-        </div>
-        <iframe id="collins-frame" src="" style="width:100%; height:calc(100% - 70px); border:none;" loading="lazy"></iframe>
-    </div>
-
     <script src="data.js"></script>
     <script>
-        let WORD_INDEX = new Set();
+        let WORD_INDEX_SET = new Set();
         let ALL_WORDS_SORTED = [];
         let FILTERED_ITEMS = [];
         const STATE = { todayBatch: [], currentIndex: 0, progress: {}, lastDate: null, forcedOld: [] };
@@ -227,7 +212,7 @@
 
         window.onload = function() {
             if (typeof DATABASE === 'undefined') return;
-            DATABASE.forEach(item => WORD_INDEX.add(item.w.toLowerCase()));
+            DATABASE.forEach(item => WORD_INDEX_SET.add(item.w.toLowerCase()));
             ALL_WORDS_SORTED = [...DATABASE].sort((a, b) => a.w.localeCompare(b.w));
             FILTERED_ITEMS = ALL_WORDS_SORTED;
             
@@ -238,10 +223,10 @@
         };
 
         function loadState() {
-            const saved = localStorage.getItem('ov1_state');
+            const saved = localStorage.getItem('ov2_state');
             if (saved) Object.assign(STATE, JSON.parse(saved));
         }
-        function saveState() { localStorage.setItem('ov1_state', JSON.stringify(STATE)); }
+        function saveState() { localStorage.setItem('ov2_state', JSON.stringify(STATE)); }
 
         function generateDailyBatch() {
             const today = new Date().toDateString();
@@ -253,7 +238,7 @@
                 });
                 const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
                 STATE.todayBatch = shuffle(newWords).slice(0, 120).concat(shuffle(oldWords).slice(0, 80));
-                STATE.lastDate = today; STATE.currentIndex = 0; STATE.forcedOld = [];
+                STATE.lastDate = today; STATE.currentIndex = 0;
                 saveState();
             }
             updateProgressText();
@@ -276,17 +261,26 @@
             }, 30000);
         }
 
+        // 核心优化：构建带有智能跳转的相关词 HTML
+        function getRelatedHTML(gStr) {
+            if (!gStr) return '无';
+            return gStr.split(',').map(rawW => {
+                const w = rawW.trim();
+                const exists = WORD_INDEX_SET.has(w.toLowerCase());
+                if (exists) {
+                    return `<span class="link-word-active" onclick="showPopup('${w}')">${w}</span>`;
+                } else {
+                    return `<span class="link-word-static">${w}</span>`;
+                }
+            }).join(', ');
+        }
+
         function renderCard() {
             const container = document.getElementById('card-view');
             const actionBar = document.getElementById('card-actions');
             
             if (STATE.currentIndex >= STATE.todayBatch.length) {
-                container.innerHTML = `
-                    <div class="flash-card" style="justify-content:center;">
-                        <h2 style="margin-bottom:10px;">今日任务已完成</h2>
-                        <p style="color:var(--text-sub); font-size:14px;">你可以去 LIST 模式继续学习任意单词</p>
-                        <button class="modal-btn" style="margin-top:30px; width:150px; align-self:center;" onclick="STATE.currentIndex=0; renderCard();">再次复习</button>
-                    </div>`;
+                container.innerHTML = `<div class="flash-card" style="justify-content:center;"><h2>今日任务已完成</h2><button class="modal-btn" style="margin-top:20px;width:120px;align-self:center;" onclick="STATE.currentIndex=0;renderCard();">重学</button></div>`;
                 actionBar.style.display = 'none';
                 return;
             }
@@ -308,7 +302,7 @@
                         <button class="audio-btn-line" onclick="playAudio('${item.w}')">
                             <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                         </button>
-                        <div class="related-area">相关词: ${item.g ? item.g.split(',').map(w=>`<span class="link-word" onclick="showPopup('${w.trim()}')">${w.trim()}</span>`).join(', ') : '无'}</div>
+                        <div class="related-area">相关词: ${getRelatedHTML(item.g)}</div>
                     </div>
                 </div>
             `;
@@ -317,7 +311,6 @@
             updateProgressText();
         }
 
-        // --- 列表分页逻辑 ---
         function renderList(append = false) {
             const listContent = document.getElementById('list-content');
             if (!append) { listContent.innerHTML = ''; listPage = 1; }
@@ -336,7 +329,6 @@
             listContent.appendChild(fragment);
         }
 
-        // 事件委托：高效处理列表点击
         document.getElementById('list-content').addEventListener('click', (e) => {
             const item = e.target.closest('.list-item');
             if (item) showPopup(item.getAttribute('data-word'));
@@ -384,20 +376,8 @@
             document.getElementById('modal-word').className = count >= 5 ? 'word-main red-text' : 'word-main';
             document.getElementById('modal-ipa').innerText = target.i || '';
             document.getElementById('modal-mean').innerText = target.m;
-            document.getElementById('collins-trigger').onclick = () => openCollins(target.w);
             playAudio(target.w);
             document.getElementById('modal').classList.add('show');
-        };
-
-        window.openCollins = (w) => {
-            const frame = document.getElementById('collins-frame');
-            frame.src = `https://www.collinsdictionary.com/zh/dictionary/english/${w.replace(/\s+/g, '-')}`;
-            document.getElementById('collins-panel').classList.add('open');
-        };
-
-        window.closeCollins = () => {
-            document.getElementById('collins-panel').classList.remove('open');
-            setTimeout(() => { document.getElementById('collins-frame').src = ""; }, 450);
         };
 
         window.prevCard = () => { if (STATE.currentIndex > 0) { STATE.currentIndex--; renderCard(); } };
